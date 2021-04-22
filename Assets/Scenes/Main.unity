@@ -4984,7 +4984,7 @@ MonoBehaviour:
     UserMark: 1
     GazeConvergence: 1
     EyeRays: 1
-    EyesState: 0
+    EyesState: 1
     PupilsRadius: 1
     GazedObject: 1
     EyeTorsion: 1
