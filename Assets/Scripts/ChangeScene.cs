@@ -211,7 +211,7 @@ public class ChangeScene : MonoBehaviour
         
     public void onTrialEnd(Trial trial)
     { 
-        if (trial.number % 2 == 0)  // "if the trial number is perfectly divisable by 20"
+        if (trial.number % 20 == 0)  // "if the trial number is perfectly divisable by 20"
         {
             Debug.Log("Time for homemade calibration!");
             StartCoroutine(StartHomemadeCalibration());
@@ -226,23 +226,23 @@ public class ChangeScene : MonoBehaviour
             WhiteScreenRend.enabled = true;
             WhiteScreenRend = WhiteScreen.GetComponent<Renderer>();
             yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
+            yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 0, 1.5f);
             yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
+            yield return new WaitForSeconds(2f); 
             CalibrationDot.transform.position = new Vector3(5, 0, -1.5f);
             yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
+            yield return new WaitForSeconds(2f); 
             CalibrationDot.transform.position = new Vector3(5, -1.5f, 0);
             yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
+            yield return new WaitForSeconds(2f); 
             CalibrationDot.transform.position = new Vector3(5, 1.5f, 0);
             yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, -1.5f, -1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, -1.5f, 1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 1.5f, -1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 1.5f, 1.5f);
             yield return new WaitForSeconds(2f);
             CalDotRend.enabled = false;
             WhiteScreenRend.enabled = false;
@@ -253,7 +253,7 @@ public class ChangeScene : MonoBehaviour
             CalDotRend.enabled = true;
             WhiteScreenRend.enabled = true;
             WhiteScreenRend = WhiteScreen.GetComponent<Renderer>();
-            yield return new WaitForSeconds(2f);
+            //yield return new WaitForSeconds(2f);
             //CalibrationDot.transform.position = new Vector3(5, 0.75f, 1.3f);
             //yield return new WaitForSeconds(2f);
             //CalibrationDot.transform.position = new Vector3(5, -0.75f, -1.3f);
@@ -270,23 +270,24 @@ public class ChangeScene : MonoBehaviour
             //yield return new WaitForSeconds(2f);
             //CalibrationDot.transform.position = new Vector3(5, 2.05f, 0.55f);
             //yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
+            yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 0, 1.5f);
+            yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
             yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 0, -1.5f);
             yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
+            yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, -1.5f, 0);
+            yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
             yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 1.5f, 0);
             yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, -1.5f, -1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, -1.5f, 1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 1.5f, -1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 1.5f, 1.5f);
             yield return new WaitForSeconds(2f);
             CalDotRend.enabled = false;
             WhiteScreenRend.enabled = false;
@@ -298,24 +299,28 @@ public class ChangeScene : MonoBehaviour
             WhiteScreenRend.enabled = true;
             WhiteScreenRend = WhiteScreen.GetComponent<Renderer>();
             yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
+            yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 0, 1.5f);
+            yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
             yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 0, -1.5f);
             yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
+            yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, -1.5f, 0);
+            yield return new WaitForSeconds(2f);
+            CalibrationDot.transform.position = new Vector3(5, 0, 0);
             yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 1.5f, 0);
             yield return new WaitForSeconds(2f);
             CalibrationDot.transform.position = new Vector3(5, 0, 0);
             yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, -1.5f, -1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, -1.5f, 1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 1.5f, -1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 1.5f, 1.5f);
-            yield return new WaitForSeconds(2f);
+            //CalibrationDot.transform.position = new Vector3(5, -1.5f, -1.5f); these are the diagonals
+            //CalibrationDot.transform.position = new Vector3(5, -1.5f, 1.5f);
+            //CalibrationDot.transform.position = new Vector3(5, 1.5f, -1.5f);
+            //CalibrationDot.transform.position = new Vector3(5, 1.5f, 1.5f);
             CalDotRend.enabled = false;
             WhiteScreenRend.enabled = false;
         }
