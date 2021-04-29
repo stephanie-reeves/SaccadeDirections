@@ -30,6 +30,10 @@ public class ChangeScene : MonoBehaviour
     // Detect whether calibration was selected for the FOVE
     public Toggle calibrate;
 
+    // In order to get the Eyes Image
+    private Texture2D dogs;
+    private Texture2D texBoi;
+
     // Make lists to help with keeping track of images (scenes + fractals) that are shown 
     List<int> SceneMatList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // the numbers here should match how many scene stimuli you have in the "scenes" material array
     List<int> FractalMatList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // same as above, but for fractals
@@ -43,6 +47,7 @@ public class ChangeScene : MonoBehaviour
         FoveManager.StartEyeTrackingCalibration();
         yield return new WaitUntil(() => FoveManager.IsEyeTrackingCalibrating() == false);
         Debug.Log(FoveManager.IsEyeTrackingCalibrating());
+        //StartCoroutine(StartHomemadeCalibration()); doesn't work :( 
     }
 
     void Start()
@@ -60,11 +65,17 @@ public class ChangeScene : MonoBehaviour
             StartCoroutine(Wait_for_calibration());//FoveManager.WaitForEyeTrackingCalibrationEnd);
         }
         else
-            return;
+            return;        
         //var direction = MainCamera.transform.position - FixationDot.transform.position;
         //MainCamera.transform.rotation = Quaternion.LookRotation(direction);
     }
 
+    private void Temp_Texts() //all Raul! In order to get Eyes Image.
+    {
+        dogs.LoadRawTextureData(FoveManager.theEyeImage().ImageData.data, (int)FoveManager.theEyeImage().ImageData.length);
+        dogs.Apply();
+        rimage.texture = dogs;
+    }
     // assign this as the first element in the "On Trial Begin" event in the Session component inspector
     public void onTrialStart(Trial trial)
     {
@@ -125,7 +136,7 @@ public class ChangeScene : MonoBehaviour
             Material SphereSharedMaterial = GetComponent<MeshRenderer>().sharedMaterial;
             session.CurrentTrial.result["StimName"] = SphereSharedMaterial;
             session.CurrentTrial.result["ImageType"] = "Scene";   
-            session.CurrentTrial.result["TiltType"] = imageTiltType;
+            session.CurrentTrial.result["TiltType"] = -(imageTiltType);
             session.CurrentTrial.result["HeadRotation"] = TheHeadRotation; 
             StartCoroutine(afterTrialStarts());
         }
@@ -180,7 +191,7 @@ public class ChangeScene : MonoBehaviour
             Material SphereSharedMaterial = GetComponent<MeshRenderer>().sharedMaterial;
             session.CurrentTrial.result["StimName"] = SphereSharedMaterial;
             session.CurrentTrial.result["ImageType"] = "Fractal";
-            session.CurrentTrial.result["TiltType"] = imageTiltType;
+            session.CurrentTrial.result["TiltType"] = -(imageTiltType);
             session.CurrentTrial.result["HeadRotation"] = TheHeadRotation;
             StartCoroutine(afterTrialStarts());
 
@@ -211,7 +222,7 @@ public class ChangeScene : MonoBehaviour
         
     public void onTrialEnd(Trial trial)
     { 
-        if (trial.number % 20 == 0)  // "if the trial number is perfectly divisable by 20"
+        if (trial.number % 20 == 0)  // "if the trial number is perfectly divisable by 20 or if it's the first trial"
         {
             Debug.Log("Time for homemade calibration!");
             StartCoroutine(StartHomemadeCalibration());
@@ -337,6 +348,20 @@ public class ChangeScene : MonoBehaviour
             rend = FixationDot.GetComponent<Renderer>();
             rend.enabled = false; 
             session.BeginNextTrial();
-        }
+        } 
+    }
+
+    private void Awake() //all Raul for EyesImage! 
+    {
+        InvokeRepeating("Temp_Texts", 2f, 0.5f); // means that every .5 s, the image will get recorded
+
+        texBoi = new Texture2D(480, 190)
+        for (int i = 0; i < 480; i++)
+            for (int j = 0; j < 190; j++)
+                texBoi.SetPixel(i, j, Color.red);
+        texBoi.Apply();
+        rimage.texture = texBoi;
+
+        dogs = new Texture2D(640, 240, TextureFormat.RGB24, false);
     }
 }

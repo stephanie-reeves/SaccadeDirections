@@ -101,6 +101,9 @@ public class GazeRecorder : MonoBehaviour
         [Tooltip("The iris radius")]
         public bool IrisRadius = true;
 
+        [Tooltip("The eyes image")]
+        public bool EyesImage = true;
+
     }
 
     // Require a reference (assigned via the Unity Inspector panel) to a FoveInterface object.
@@ -276,6 +279,8 @@ public class GazeRecorder : MonoBehaviour
             caps |= ClientCapabilities.UserIPD;
         if (exportFields.IrisRadius)
             caps |= ClientCapabilities.IrisRadius;
+        if (exportFields.EyesImage)
+            caps |= ClientCapabilities.EyesImage;
 
         FoveManager.RegisterCapabilities(caps);
 

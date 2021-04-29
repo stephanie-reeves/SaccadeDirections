@@ -713,6 +713,10 @@ namespace Fove.Unity
             return new Result<PupilShape>((PupilShape)result.value, result.error);
         }
 
+        public static Bitmap theEyeImage()
+        {
+            return Instance.eyesImage;
+        }
         /// <summary>
         /// Starts eye tracking calibration
         /// <para>
