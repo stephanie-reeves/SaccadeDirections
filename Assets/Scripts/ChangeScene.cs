@@ -33,12 +33,13 @@ public class ChangeScene : MonoBehaviour
     // In order to get the Eyes Image
     private Texture2D dogs;
     private Texture2D texBoi;
+    public RawImage rimage;
 
     // Make lists to help with keeping track of images (scenes + fractals) that are shown 
     List<int> SceneMatList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // the numbers here should match how many scene stimuli you have in the "scenes" material array
     List<int> FractalMatList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // same as above, but for fractals
 
-    private string TheHeadRotation = "tiltLeft"; // change this depending on the head tilt of the subject; can be "straight", "tiltLeft", or "tiltRight"
+    private string TheHeadRotation = "straight"; // change this depending on the head tilt of the subject; can be "straight", "tiltLeft", or "tiltRight"
 
     IEnumerator Wait_for_calibration()
     {
@@ -355,7 +356,7 @@ public class ChangeScene : MonoBehaviour
     {
         InvokeRepeating("Temp_Texts", 2f, 0.5f); // means that every .5 s, the image will get recorded
 
-        texBoi = new Texture2D(480, 190)
+        texBoi = new Texture2D(480, 190);
         for (int i = 0; i < 480; i++)
             for (int j = 0; j < 190; j++)
                 texBoi.SetPixel(i, j, Color.red);
