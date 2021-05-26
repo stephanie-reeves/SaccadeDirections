@@ -23,10 +23,11 @@ public class ChangeScene : MonoBehaviour
     public Material[] fractals;
     public Material[] scenes;
     public Material BaseMaterial;
+    public Material PlainWhite;
     public Renderer rend;
     public Renderer WhiteScreenRend;
     public Renderer CalDotRend;
-
+    
     // Detect whether calibration was selected for the FOVE
     public Toggle calibrate;
 
@@ -39,7 +40,7 @@ public class ChangeScene : MonoBehaviour
     List<int> SceneMatList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // the numbers here should match how many scene stimuli you have in the "scenes" material array
     List<int> FractalMatList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // same as above, but for fractals
 
-    private string TheHeadRotation = "straight"; // change this depending on the head tilt of the subject; can be "straight", "tiltLeft", or "tiltRight"
+    //private string TheHeadRotation = "straight"; // change this depending on the head tilt of the subject; can be "straight", "tiltLeft", or "tiltRight"
 
     IEnumerator Wait_for_calibration()
     {
@@ -56,10 +57,6 @@ public class ChangeScene : MonoBehaviour
         FoveManager.TareOrientation();
         WhiteScreenRend.enabled = false;
         CalDotRend.enabled = false;
-
-        // These two commands are what freezes the scene regardless of head movement.... they produce a lot of jitter :/
-        //Sphere.transform.parent = FoveInterface.transform;
-        //FixationDot.transform.parent = FoveInterface.transform;
 
         if (calibrate.isOn)
         {
@@ -138,7 +135,7 @@ public class ChangeScene : MonoBehaviour
             session.CurrentTrial.result["StimName"] = SphereSharedMaterial;
             session.CurrentTrial.result["ImageType"] = "Scene";   
             session.CurrentTrial.result["TiltType"] = -(imageTiltType);
-            session.CurrentTrial.result["HeadRotation"] = TheHeadRotation; 
+            //session.CurrentTrial.result["HeadRotation"] = TheHeadRotation; 
             StartCoroutine(afterTrialStarts());
         }
         else if (imageType == "2")
@@ -193,7 +190,7 @@ public class ChangeScene : MonoBehaviour
             session.CurrentTrial.result["StimName"] = SphereSharedMaterial;
             session.CurrentTrial.result["ImageType"] = "Fractal";
             session.CurrentTrial.result["TiltType"] = -(imageTiltType);
-            session.CurrentTrial.result["HeadRotation"] = TheHeadRotation;
+            //session.CurrentTrial.result["HeadRotation"] = TheHeadRotation;
             StartCoroutine(afterTrialStarts());
 
 
@@ -223,119 +220,42 @@ public class ChangeScene : MonoBehaviour
         
     public void onTrialEnd(Trial trial)
     { 
-        if (trial.number % 20 == 0)  // "if the trial number is perfectly divisable by 20 or if it's the first trial"
+        if (trial.number % 20 == 0 || trial.number == 1)  // "if the trial number is perfectly divisable by 20 or if it's the first trial"
         {
             Debug.Log("Time for homemade calibration!");
-            StartCoroutine(StartHomemadeCalibration());
+            WhiteScreenRend.enabled = true;
+            WhiteScreenRend = WhiteScreen.GetComponent<Renderer>();
+            StartCoroutine(StartHomemadeCalibration());         
         }
     }
 
     IEnumerator StartHomemadeCalibration()
     {
-        if (TheHeadRotation == "straight")
-        {
-            CalDotRend.enabled = true;
-            WhiteScreenRend.enabled = true;
-            WhiteScreenRend = WhiteScreen.GetComponent<Renderer>();
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f); 
-            CalibrationDot.transform.position = new Vector3(5, 0, -1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f); 
-            CalibrationDot.transform.position = new Vector3(5, -1.5f, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f); 
-            CalibrationDot.transform.position = new Vector3(5, 1.5f, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalDotRend.enabled = false;
-            WhiteScreenRend.enabled = false;
-        }
-        else if (TheHeadRotation == "tiltRight")
-        {
-            //WhiteScreen.transform.rotation = Quaternion.Euler(-30, 0, 0); //commented bc of disabled head tracking
-            CalDotRend.enabled = true;
-            WhiteScreenRend.enabled = true;
-            WhiteScreenRend = WhiteScreen.GetComponent<Renderer>();
-            //yield return new WaitForSeconds(2f);
-            //CalibrationDot.transform.position = new Vector3(5, 0.75f, 1.3f);
-            //yield return new WaitForSeconds(2f);
-            //CalibrationDot.transform.position = new Vector3(5, -0.75f, -1.3f);
-            //yield return new WaitForSeconds(2f);
-            //CalibrationDot.transform.position = new Vector3(5, -1.3f, 0.75f);
-            //yield return new WaitForSeconds(2f);
-            //CalibrationDot.transform.position = new Vector3(5, 1.3f, -0.75f);
-            //yield return new WaitForSeconds(2f);
-            //CalibrationDot.transform.position = new Vector3(5, 0.55f, -2.05f);
-            //yield return new WaitForSeconds(2f);
-            //CalibrationDot.transform.position = new Vector3(5, -0.55f, 2.05f);
-            //yield return new WaitForSeconds(2f);
-            //CalibrationDot.transform.position = new Vector3(5, -2.05f, -0.55f);
-            //yield return new WaitForSeconds(2f);
-            //CalibrationDot.transform.position = new Vector3(5, 2.05f, 0.55f);
-            //yield return new WaitForSeconds(2f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, -1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, -1.5f, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 1.5f, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalDotRend.enabled = false;
-            WhiteScreenRend.enabled = false;
-        }
-        else if (TheHeadRotation == "tiltLeft")
-        {
-            //WhiteScreen.transform.rotation = Quaternion.Euler(30, 0, 0); //commented bc of disabled head tracking
-            CalDotRend.enabled = true;
-            WhiteScreenRend.enabled = true;
-            WhiteScreenRend = WhiteScreen.GetComponent<Renderer>();
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, -1.5f);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, -1.5f, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 1.5f, 0);
-            yield return new WaitForSeconds(2f);
-            CalibrationDot.transform.position = new Vector3(5, 0, 0);
-            yield return new WaitForSeconds(2f);
-            //CalibrationDot.transform.position = new Vector3(5, -1.5f, -1.5f); these are the diagonals
-            //CalibrationDot.transform.position = new Vector3(5, -1.5f, 1.5f);
-            //CalibrationDot.transform.position = new Vector3(5, 1.5f, -1.5f);
-            //CalibrationDot.transform.position = new Vector3(5, 1.5f, 1.5f);
-            CalDotRend.enabled = false;
-            WhiteScreenRend.enabled = false;
-        }
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));  // this command makes it so that we wait to proceed until the space bar is pressed
+        MeshRenderer meshRenderer = WhiteScreen.GetComponent<MeshRenderer>();
+        meshRenderer.material = PlainWhite;
+        CalDotRend.enabled = true;
+        yield return new WaitForSeconds(2f);
+        CalibrationDot.transform.position = new Vector3(5, 0, 0);
+        yield return new WaitForSeconds(2f);
+        CalibrationDot.transform.position = new Vector3(5, 0, 1.5f);
+        yield return new WaitForSeconds(2f);
+        CalibrationDot.transform.position = new Vector3(5, 0, 0);
+        yield return new WaitForSeconds(2f);
+        CalibrationDot.transform.position = new Vector3(5, 0, -1.5f);
+        yield return new WaitForSeconds(2f);
+        CalibrationDot.transform.position = new Vector3(5, 0, 0);
+        yield return new WaitForSeconds(2f);
+        CalibrationDot.transform.position = new Vector3(5, -1.5f, 0);
+        yield return new WaitForSeconds(2f);
+        CalibrationDot.transform.position = new Vector3(5, 0, 0);
+        yield return new WaitForSeconds(2f);
+        CalibrationDot.transform.position = new Vector3(5, 1.5f, 0);
+        yield return new WaitForSeconds(2f);
+        CalibrationDot.transform.position = new Vector3(5, 0, 0);
+        yield return new WaitForSeconds(2f);
+        CalDotRend.enabled = false;
+        WhiteScreenRend.enabled = false;       
     }
 
 
@@ -344,7 +264,7 @@ public class ChangeScene : MonoBehaviour
         //var rotation = FoveManager.GetHmdRotation();
         //Debug.Log(rotation);
 
-        if (Input.GetKeyDown(KeyCode.Space) & !session.InTrial)
+        if (Input.GetKeyDown(KeyCode.Alpha1) & !session.InTrial)
         {
             rend = FixationDot.GetComponent<Renderer>();
             rend.enabled = false; 
@@ -365,4 +285,10 @@ public class ChangeScene : MonoBehaviour
 
         dogs = new Texture2D(640, 240, TextureFormat.RGB24, false);
     }
+
+
+    // OLD (but maybe useful later??)
+    // These two commands are what freezes the scene regardless of head movement.... they produce a lot of jitter :/
+    // Sphere.transform.parent = FoveInterface.transform;
+    // FixationDot.transform.parent = FoveInterface.transform;
 }

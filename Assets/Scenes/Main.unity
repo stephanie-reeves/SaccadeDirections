@@ -976,7 +976,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5bbfb6b45eefc3941be8e2c61a2660e7, type: 2}
+  - {fileID: 2100000, guid: e921624e73079d5449ba7b3c29485a77, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1113,6 +1113,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 00fed61623bec1f4c8634f6abb0dcbb3, type: 2}
   - {fileID: 2100000, guid: 20b040001352253498591ef44f7ed7bf, type: 2}
   BaseMaterial: {fileID: 2100000, guid: e921624e73079d5449ba7b3c29485a77, type: 3}
+  PlainWhite: {fileID: 2100000, guid: 54252d1e80fd80244bb83d2ef0a4fe21, type: 2}
   rend: {fileID: 1948712797}
   WhiteScreenRend: {fileID: 752820023}
   CalDotRend: {fileID: 109691981}
@@ -1701,9 +1702,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 752820025}
+  - component: {fileID: 752820027}
   - component: {fileID: 752820024}
   - component: {fileID: 752820023}
+  - component: {fileID: 752820026}
   m_Layer: 0
   m_Name: WhiteScreen
   m_TagString: Untagged
@@ -1729,7 +1731,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 54252d1e80fd80244bb83d2ef0a4fe21, type: 2}
+  - {fileID: 2100000, guid: 46712cd35e97a914cb3e803ceb4fa87a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1758,20 +1760,33 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 752820022}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &752820025
-Transform:
+--- !u!222 &752820026
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 752820022}
+  m_CullTransparentMesh: 0
+--- !u!224 &752820027
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 752820022}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.5, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 5.5, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &769563138
 GameObject:
   m_ObjectHideFlags: 0
@@ -3730,6 +3745,11 @@ PrefabInstance:
       propertyPath: onSessionBegin.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 203569540471596912, guid: 0a3b6392f04558844bd340e68ced1ff9,
+        type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 653059108743847710, guid: 0a3b6392f04558844bd340e68ced1ff9,
         type: 3}
       propertyPath: termsAndConditions
@@ -4061,6 +4081,12 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5489284586117691312, guid: 0a3b6392f04558844bd340e68ced1ff9,
+        type: 3}
+      propertyPath: m_Text
+      value: Thanks for participating! Please tick if you understand the instructions
+        and agree for your data to be collected and used for research purposes.<color=red>*</color>
+      objectReference: {fileID: 0}
     - target: {fileID: 5664062349193308020, guid: 0a3b6392f04558844bd340e68ced1ff9,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -4090,6 +4116,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482629383985664186, guid: 0a3b6392f04558844bd340e68ced1ff9,
+        type: 3}
+      propertyPath: m_Value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6783090318551980281, guid: 0a3b6392f04558844bd340e68ced1ff9,
         type: 3}
@@ -4264,6 +4295,11 @@ PrefabInstance:
     - target: {fileID: 8307715182677704244, guid: 0a3b6392f04558844bd340e68ced1ff9,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8307715182677704244, guid: 0a3b6392f04558844bd340e68ced1ff9,
+        type: 3}
+      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8563684494448067901, guid: 0a3b6392f04558844bd340e68ced1ff9,
@@ -5196,6 +5232,7 @@ MonoBehaviour:
     GazedObject: 1
     EyeTorsion: 1
     HeadRotation: 1
+    HeadPosition: 1
     PupilShape: 1
     IPD: 1
     IrisRadius: 1

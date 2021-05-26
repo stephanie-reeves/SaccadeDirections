@@ -92,6 +92,9 @@ public class GazeRecorder : MonoBehaviour
         [Tooltip("The head rotation")]
         public bool HeadRotation = true;
 
+        [Tooltip("The head Position")]
+        public bool HeadPosition = true;
+
         [Tooltip("The pupil shape")]
         public bool PupilShape = true;
 
@@ -163,6 +166,7 @@ public class GazeRecorder : MonoBehaviour
         public Stereo<Result<float>> PupilsRadius;
         public Stereo<Result<float>> EyeTorsions;
         public Result<Quaternion> HeadRotation;
+        public Result<Vector3> HeadPosition;
         public Stereo<Result<Fove.Unity.PupilShape>> PupilShape;
         public Result<float> IPD;
         public Stereo<Result<float>> IrisRadius;
@@ -482,6 +486,9 @@ public class GazeRecorder : MonoBehaviour
         var irisRadiusR = FoveManager.GetIrisRadius(Eye.Right);
 
         // If you add new fields, be sure to write them here.
+        var isStanding = fove.poseType == FoveInterface.PlayerPose.Standing;
+        var hmdAdjustedPosition = FoveManager.GetHmdPosition(isStanding);
+
         var datum = new Datum
         {
             AppTime = (float)stopwatch.Elapsed.TotalSeconds,
@@ -494,6 +501,7 @@ public class GazeRecorder : MonoBehaviour
             PupilsRadius = new Stereo<Result<float>>(pupilRadiusLeft, pupilRadiusRight),
             EyeTorsions = new Stereo<Result<float>>(eyeTorsionL, eyeTorsionR),
             HeadRotation = new Result<Quaternion>(FoveManager.GetHmdRotation()),
+            HeadPosition = new Result<Vector3>(hmdAdjustedPosition),
             PupilShape = new Stereo<Result<Fove.Unity.PupilShape>>(pupilShapeL, pupilShapeR),
             IPD = new Result<float>(FoveManager.GetUserIPD()),
             IrisRadius = new Stereo<Result<float>>(irisRadiusL, irisRadiusR)
@@ -599,6 +607,7 @@ public class GazeRecorder : MonoBehaviour
         private const string PupilShapeHeader = "Pupil Shape";
         private const string IPDHeader = "IPD";
         private const string IrisRadiusHeader = "Iris Radius";
+        private const string HeadPositionHeader = "Head Position";
 
         private readonly ExportSettings export;
 
@@ -685,6 +694,9 @@ public class GazeRecorder : MonoBehaviour
             if (export.HeadRotation)
                 append(builder, HeadRotationHeader);
 
+            if (export.HeadPosition)
+                append(builder, HeadPositionHeader);
+
             if (export.PupilShape)
                 appendLeftRight(builder, PupilShapeHeader);
 
@@ -693,6 +705,8 @@ public class GazeRecorder : MonoBehaviour
 
             if (export.IrisRadius)
                 appendLeftRight(builder, IrisRadiusHeader);
+
+            
 
             builder.Remove(builder.Length - 1, 1); // remove the last separator of the line
             builder.AppendLine();
@@ -770,6 +784,13 @@ public class GazeRecorder : MonoBehaviour
             Append(builder, quatFormat, result.value.x, result.error);
             Append(builder, quatFormat, result.value.y, result.error);
             Append(builder, quatFormat, result.value.z, result.error);
+        }
+
+        private void Append(StringBuilder builder, Result<Vector3> result, int var1, int var2, int var3, int var4, int var5, int var6, int var7)
+        {
+            Append(builder, vectorFormat, result.value.x, result.error);
+            Append(builder, vectorFormat, result.value.y, result.error);
+            Append(builder, vectorFormat, result.value.z, result.error);
         }
 
         private void Append(StringBuilder builder, Vector2 result, ErrorCode errCde, int test, int test1, int test2)
@@ -854,6 +875,9 @@ public class GazeRecorder : MonoBehaviour
 
                 if (export.HeadRotation)
                     Append(builder, datum.HeadRotation, 1, 2, 3);
+
+                if (export.HeadPosition)
+                    Append(builder, datum.HeadPosition, 1, 2, 3, 4 , 5 , 6, 7);
 
                 if (export.PupilShape)
                 {
