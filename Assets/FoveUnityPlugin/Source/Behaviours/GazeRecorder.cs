@@ -657,6 +657,51 @@ public class GazeRecorder : MonoBehaviour
                 appendXYZ(b, h + " dir");
             };
 
+            Action<StringBuilder, string> appendQuat = (b, h) =>
+            {
+                b.Append(h);
+                b.Append(" w");
+                b.Append(CsvSeparator);
+                b.Append(h);
+                b.Append(" x");
+                b.Append(CsvSeparator);
+                b.Append(h);
+                b.Append(" y");
+                b.Append(CsvSeparator);
+                b.Append(h);
+                b.Append(" z");
+                b.Append(CsvSeparator);
+            };
+
+            Action<StringBuilder, string> appendVec = (b, h) =>
+            {
+                b.Append(h);
+                b.Append(" x");
+                b.Append(CsvSeparator);
+                b.Append(h);
+                b.Append(" y");
+                b.Append(CsvSeparator);
+                b.Append(h);
+                b.Append(" z");
+                b.Append(CsvSeparator);
+            };
+
+            Action<StringBuilder, string> appendPupShape = (b, h) =>
+            {
+                b.Append(h);
+                b.Append(" A");
+                b.Append(CsvSeparator);
+                b.Append(h);
+                b.Append(" B");
+                b.Append(CsvSeparator);
+                b.Append(h);
+                b.Append(" C");
+                b.Append(CsvSeparator);
+                b.Append(h);
+                b.Append(" D");
+                b.Append(CsvSeparator);
+            };
+
             // Append the full data header to the builder
 
             builder.Append(CsvSeparator); // keep the first column for the input file
@@ -692,20 +737,19 @@ public class GazeRecorder : MonoBehaviour
                 appendLeftRight(builder, EyeTorsionHeader);
 
             if (export.HeadRotation)
-                append(builder, HeadRotationHeader);
+                appendQuat(builder, HeadRotationHeader);
 
             if (export.HeadPosition)
-                append(builder, HeadPositionHeader);
+                appendVec(builder, HeadPositionHeader);
 
             if (export.PupilShape)
-                appendLeftRight(builder, PupilShapeHeader);
+                appendPupShape(builder, PupilShapeHeader);
 
             if (export.IPD)
                 append(builder, IPDHeader);
 
             if (export.IrisRadius)
                 appendLeftRight(builder, IrisRadiusHeader);
-
             
 
             builder.Remove(builder.Length - 1, 1); // remove the last separator of the line
@@ -777,7 +821,7 @@ public class GazeRecorder : MonoBehaviour
             Append(builder, new Result<Vector3>(ray.value.direction, ray.error));
         }
 
-        /// new SR append methods for head rotation, pupil shape, and eye shape
+        /// new append methods for head rotation, head position, pupil shape, IPD, and iris radius (eye shape is in here too, though not used anymore)
         private void Append(StringBuilder builder, Result<Quaternion> result, int variable1, int variable2, int variable3)
         {
             Append(builder, quatFormat, result.value.w, result.error);

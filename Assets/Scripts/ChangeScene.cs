@@ -55,6 +55,7 @@ public class ChangeScene : MonoBehaviour
     void Start()
     {
         FoveManager.TareOrientation();
+        rend.enabled = true;
         WhiteScreenRend.enabled = false;
         CalDotRend.enabled = false;
 
@@ -261,8 +262,21 @@ public class ChangeScene : MonoBehaviour
 
     void Update()
     {
-        //var rotation = FoveManager.GetHmdRotation();
-        //Debug.Log(rotation);
+        var rotation = FoveManager.GetHmdRotation();
+        //Debug.Log(rotation.value); // FOVE stores information in a data structure called Result, and so to get the actual values, you need to put ".value" otherwise this won't work
+        
+        var thetaRad = Mathf.Atan2(2 * (rotation.value[1]* rotation.value[2] - rotation.value[0]* rotation.value[3]), (1.0f - 2.0f * (rotation.value[2] * rotation.value[2] + rotation.value[3] * rotation.value[3])));
+        var thetaDeg = thetaRad * Mathf.Rad2Deg; // in degrees
+        
+        var phiRad = -Mathf.Asin(2 * (rotation.value[1] * rotation.value[3] - rotation.value[0] * rotation.value[2]));
+        var phiDeg = phiRad * Mathf.Rad2Deg;
+
+        var psiRad = Mathf.Atan2(2 * (rotation.value[0] * rotation.value[1] - rotation.value[2] * rotation.value[3]), (1.0f - 2.0f * (rotation.value[1] * rotation.value[1] + rotation.value[2] * rotation.value[2])));
+        var psiDeg = psiRad * Mathf.Rad2Deg;
+
+        Debug.Log("theta:" + thetaDeg + "   phi:" + phiDeg + "   psi:" + psiDeg);
+        // in real time, it looks like theta = pitch, phi = yaw, psi = roll..... but this is not what it looks like in matlab (in matlab, theta is roll)
+
 
         if (Input.GetKeyDown(KeyCode.Alpha1) & !session.InTrial)
         {
