@@ -36,12 +36,16 @@ public class ChangeScene : MonoBehaviour
     private Texture2D texBoi;
     public RawImage rimage;
 
+    // Public list -- is this right though??? How to connect the trialList from our other script with this one??
+    public List<string[]> trialList;
+
     // Make lists to help with keeping track of images (scenes + fractals) that are shown 
     List<int> SceneMatList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // the numbers here should match how many scene stimuli you have in the "scenes" material array
     List<int> FractalMatList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // same as above, but for fractals
 
     //private string TheHeadRotation = "straight"; // change this depending on the head tilt of the subject; can be "straight", "tiltLeft", or "tiltRight"
 
+    
     IEnumerator Wait_for_calibration()
     {
         Debug.Log("IsCal?");
@@ -76,60 +80,159 @@ public class ChangeScene : MonoBehaviour
         rimage.texture = dogs;
     }
     // assign this as the first element in the "On Trial Begin" event in the Session component inspector
+
+
+    public void Generate(Session session)
+    {
+        List<string> imageTypes = session.settings.GetStringList("stimulus_imageType");
+        List<string> imageTiltTypes = session.settings.GetStringList("stimulus_imageTiltType");
+        List<string> imageNumbers = session.settings.GetStringList("stimulus_number");
+        int numRepeats = session.settings.GetInt("num_repeats");
+
+        // Here is an empty list that we will add to 
+        List<string[]> trialList = new List<string[]>();
+
+        //var imageTiltTypes = [-30, 0, 30];
+        //var imageTypes = ["scenes", "fractals"];
+
+        //List<int> imageNumbers = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // the number of fractals (30) which is the also the number of scenes (30)
+
+        //int numRepeats = 10;
+
+        for (int i = 0; i < numRepeats; i++)
+        {
+            foreach (string imageType in imageTypes)
+            {
+                foreach (string imageTiltType in imageTiltTypes)
+                {
+                    //Trial newTrial = block.CreateTrial();
+                    //newTrial.settings.SetValue("stimulus_imageType", imageType);
+                    //newTrial.settings.SetValue("stimulus_imageTiltType", imageTiltType);
+                    //newTrial.settings.SetValue("stimulus_number", imageNumber);
+                    string[] temp = new string[] { imageType, imageTiltType, "1" }; //the 1 is for a random number that we will fill in later.... will cycle through 1 to 30 
+                    trialList.Add(temp);
+                }
+            }
+        }
+        trialList.Shuffle();
+
+        //session.settings.SetValue("trialOrder", trialList);
+        //Debug.Log("trialOrder");
+
+        //FYI tempList[0][2] means 0th row out of 60, and 2th col (really 3rd but C# ya know)
+        imageNumbers.Shuffle(); // will shuffle 1 to 30
+
+        var totalTrials = numRepeats * imageTiltTypes.Count * imageTypes.Count;
+        Block theBlock = session.CreateBlock(totalTrials);
+        var trialcounter = 0;
+
+        while (trialcounter < totalTrials)
+        {
+            for (int i = 0; i < 30; i++) //30 bc we have 30 numImages
+            {
+                {
+                    trialList[trialcounter][2] = imageNumbers[i]; //  in trialList(trialcounter) in the 2nd place, put the number of imageNumbers that is shuffled. trial counter will go up through total trials so this will make it so that image numbers will cycle through 1-30 and then after that, reset back
+                    trialcounter = trialcounter + i;
+                }
+            }
+            imageNumbers.Shuffle(); //we have to do this so that once we go through all the image numbers, we will re-shuffle so  that can still use more 
+        }
+
+        // now we somehow need to assign the trial list info to the actual trials....?
+        for (int i = 0; i < trialList.Count; i++)
+        {
+            Trial newTrial = theBlock.CreateTrial();
+        }
+    }
+
+
+
     public void onTrialStart(Trial trial)
     {
-        string imageType = trial.settings.GetString("stimulus_imageType");
-        int imageTiltType = trial.settings.GetInt("stimulus_imageTiltType");
+        // this i feel like we don't need now.... may 28
+        //string imageType = trial.settings.GetString("stimulus_imageType");
+        //int imageTiltType = trial.settings.GetInt("stimulus_imageTiltType");
+        //int imageNumber = trial.settings.GetInt("stimulus_number"); //new may 27
+
+        string imageType = (trialList[trial.number - 1][0]);
+        int imageTiltType = int.Parse(trialList[trial.number - 1][1]);
+        int imageNumber = int.Parse(trialList[trial.number - 1][2]);
+
+        Session.instance.CurrentTrial.result["Image Tilt Type"] = -imageTiltType;
+        Session.instance.CurrentTrial.result["Image Type"] = imageType;
+        Session.instance.CurrentTrial.result["Image Number"] = imageNumber;
 
         // apply our settings to the new object
         Sphere.transform.rotation = Quaternion.Euler(transform.rotation.x + imageTiltType, transform.rotation.y, transform.rotation.z);
         MeshRenderer meshRenderer = Sphere.GetComponent<MeshRenderer>();
 
-        if (imageType == "1")
+        // new may 27
+        if (imageType == "scenes")
         {
-            if (SceneMatList.Count == 0)
-            {
-                //if the list is empty, add things to it
-                SceneMatList.Add(1);
-                SceneMatList.Add(2);
-                SceneMatList.Add(3);
-                SceneMatList.Add(4);
-                SceneMatList.Add(5);
-                SceneMatList.Add(6);
-                SceneMatList.Add(7);
-                SceneMatList.Add(8);
-                SceneMatList.Add(9);
-                SceneMatList.Add(10);
-                SceneMatList.Add(11);
-                SceneMatList.Add(12);
-                SceneMatList.Add(13);
-                SceneMatList.Add(14);
-                SceneMatList.Add(15);
-                SceneMatList.Add(16);
-                SceneMatList.Add(17);
-                SceneMatList.Add(18);
-                SceneMatList.Add(19);
-                SceneMatList.Add(20);
-                SceneMatList.Add(21);
-                SceneMatList.Add(22);
-                SceneMatList.Add(23);
-                SceneMatList.Add(24);
-                SceneMatList.Add(25);
-                SceneMatList.Add(26);
-                SceneMatList.Add(27);
-                SceneMatList.Add(28);
-                SceneMatList.Add(29);
-                SceneMatList.Add(30);
-            }
-            // using lists to make the stimuli randomized and evenly/equally used
-            int randIndex = Random.Range(0, SceneMatList.Count);  // get a random index
-            int getVal = SceneMatList[randIndex];  // get the actual value of that index
-            Debug.Log(randIndex);
-            Debug.Log(getVal);
-            meshRenderer.material = scenes[getVal-1];  // set the material to be the actual value (minus 1 bc indexing is annoying in unity)
-            SceneMatList.RemoveAt(randIndex);  // remove the element in the list that is the indexed numbered
-            Debug.Log("here's the list after deletion...");
-            foreach (var x in SceneMatList) Debug.Log(x.ToString());  // this prints out the list 
+            meshRenderer.material = scenes[imageNumber];
+        }
+        else //for fractals
+        {
+            meshRenderer.material = fractals[imageNumber];
+        }
+
+        //Material[] mymaterials;
+        //if (imagetyle = "1")
+        //{
+        //    mymaterials = scenes;
+        //}
+        //else
+        //{
+        //    mymaterials = fractals;
+        //}
+
+        //meshRenderer.material = mymaterials[settiing.imagenunmber];
+
+        //if (imageType == "1")
+        //{
+        //    if (SceneMatList.Count == 0)
+        //    {
+        //        //if the list is empty, add things to it
+        //        SceneMatList.Add(1);
+        //        SceneMatList.Add(2);
+        //        SceneMatList.Add(3);
+        //        SceneMatList.Add(4);
+        //        SceneMatList.Add(5);
+        //        SceneMatList.Add(6);
+        //        SceneMatList.Add(7);
+        //        SceneMatList.Add(8);
+        //        SceneMatList.Add(9);
+        //        SceneMatList.Add(10);
+        //        SceneMatList.Add(11);
+        //        SceneMatList.Add(12);
+        //        SceneMatList.Add(13);
+        //        SceneMatList.Add(14);
+        //        SceneMatList.Add(15);
+        //        SceneMatList.Add(16);
+        //        SceneMatList.Add(17);
+        //        SceneMatList.Add(18);
+        //        SceneMatList.Add(19);
+        //        SceneMatList.Add(20);
+        //        SceneMatList.Add(21);
+        //        SceneMatList.Add(22);
+        //        SceneMatList.Add(23);
+        //        SceneMatList.Add(24);
+        //        SceneMatList.Add(25);
+        //        SceneMatList.Add(26);
+        //        SceneMatList.Add(27);
+        //        SceneMatList.Add(28);
+        //        SceneMatList.Add(29);
+        //        SceneMatList.Add(30);
+        //    }
+        //    // using lists to make the stimuli randomized and evenly/equally used
+        //    int randIndex = Random.Range(0, SceneMatList.Count);  // get a random index
+        //    int getVal = SceneMatList[randIndex];  // get the actual value of that index
+        //    Debug.Log(randIndex);
+        //    Debug.Log(getVal);
+        //    meshRenderer.material = scenes[getVal-1];  // set the material to be the actual value (minus 1 bc indexing is annoying in unity)
+        //    SceneMatList.RemoveAt(randIndex);  // remove the element in the list that is the indexed numbered
+        //    Debug.Log("here's the list after deletion...");
+        //    foreach (var x in SceneMatList) Debug.Log(x.ToString());  // this prints out the list 
 
             // log some trial info in our excel sheet
             Material SphereSharedMaterial = GetComponent<MeshRenderer>().sharedMaterial;
@@ -138,75 +241,64 @@ public class ChangeScene : MonoBehaviour
             session.CurrentTrial.result["TiltType"] = -(imageTiltType);
             //session.CurrentTrial.result["HeadRotation"] = TheHeadRotation; 
             StartCoroutine(afterTrialStarts());
-        }
-        else if (imageType == "2")
-        {
-            if (FractalMatList.Count == 0)
-            {
-                //if the list is empty, add things to it
-                FractalMatList.Add(1);
-                FractalMatList.Add(2);
-                FractalMatList.Add(3);
-                FractalMatList.Add(4);
-                FractalMatList.Add(5);
-                FractalMatList.Add(6);
-                FractalMatList.Add(7);
-                FractalMatList.Add(8);
-                FractalMatList.Add(9);
-                FractalMatList.Add(10);
-                FractalMatList.Add(11);
-                FractalMatList.Add(12);
-                FractalMatList.Add(13);
-                FractalMatList.Add(14);
-                FractalMatList.Add(15);
-                FractalMatList.Add(16);
-                FractalMatList.Add(17);
-                FractalMatList.Add(18);
-                FractalMatList.Add(19);
-                FractalMatList.Add(20);
-                FractalMatList.Add(21);
-                FractalMatList.Add(22);
-                FractalMatList.Add(23);
-                FractalMatList.Add(24);
-                FractalMatList.Add(25);
-                FractalMatList.Add(26);
-                FractalMatList.Add(27);
-                FractalMatList.Add(28);
-                FractalMatList.Add(29);
-                FractalMatList.Add(30);
-            }
+        //}
+        //else if (imageType == "2")
+        //{
+        //    if (FractalMatList.Count == 0)
+        //    {
+        //        //if the list is empty, add things to it
+        //        FractalMatList.Add(1);
+        //        FractalMatList.Add(2);
+        //        FractalMatList.Add(3);
+        //        FractalMatList.Add(4);
+        //        FractalMatList.Add(5);
+        //        FractalMatList.Add(6);
+        //        FractalMatList.Add(7);
+        //        FractalMatList.Add(8);
+        //        FractalMatList.Add(9);
+        //        FractalMatList.Add(10);
+        //        FractalMatList.Add(11);
+        //        FractalMatList.Add(12);
+        //        FractalMatList.Add(13);
+        //        FractalMatList.Add(14);
+        //        FractalMatList.Add(15);
+        //        FractalMatList.Add(16);
+        //        FractalMatList.Add(17);
+        //        FractalMatList.Add(18);
+        //        FractalMatList.Add(19);
+        //        FractalMatList.Add(20);
+        //        FractalMatList.Add(21);
+        //        FractalMatList.Add(22);
+        //        FractalMatList.Add(23);
+        //        FractalMatList.Add(24);
+        //        FractalMatList.Add(25);
+        //        FractalMatList.Add(26);
+        //        FractalMatList.Add(27);
+        //        FractalMatList.Add(28);
+        //        FractalMatList.Add(29);
+        //        FractalMatList.Add(30);
+        //    }
 
-            // using lists to make the stimuli randomized and evenly/equally used
-            int randIndex = Random.Range(0, FractalMatList.Count);  // get a random index
-            int getVal = FractalMatList[randIndex];  // get the actual value of that index
-            Debug.Log(randIndex);
-            Debug.Log(getVal);
-            meshRenderer.material = fractals[getVal - 1];  // set the material to be the actual value (minus 1 bc indexing is annoying in unity)
-            FractalMatList.RemoveAt(randIndex);  // remove the element in the list that is the indexed numbered
-            Debug.Log("here's the list after deletion...");
-            foreach (var x in FractalMatList) Debug.Log(x.ToString());  // this prints out the list 
+        //    // using lists to make the stimuli randomized and evenly/equally used
+        //    int randIndex = Random.Range(0, FractalMatList.Count);  // get a random index
+        //    int getVal = FractalMatList[randIndex];  // get the actual value of that index
+        //    Debug.Log(randIndex);
+        //    Debug.Log(getVal);
+        //    meshRenderer.material = fractals[getVal - 1];  // set the material to be the actual value (minus 1 bc indexing is annoying in unity)
+        //    FractalMatList.RemoveAt(randIndex);  // remove the element in the list that is the indexed numbered
+        //    Debug.Log("here's the list after deletion...");
+        //    foreach (var x in FractalMatList) Debug.Log(x.ToString());  // this prints out the list 
 
-            // log some trial info in our excel sheet
-            Material SphereSharedMaterial = GetComponent<MeshRenderer>().sharedMaterial;
-            session.CurrentTrial.result["StimName"] = SphereSharedMaterial;
-            session.CurrentTrial.result["ImageType"] = "Fractal";
-            session.CurrentTrial.result["TiltType"] = -(imageTiltType);
-            //session.CurrentTrial.result["HeadRotation"] = TheHeadRotation;
-            StartCoroutine(afterTrialStarts());
+        //    // log some trial info in our excel sheet
+        //    Material SphereSharedMaterial = GetComponent<MeshRenderer>().sharedMaterial;
+        //    session.CurrentTrial.result["StimName"] = SphereSharedMaterial;
+        //    session.CurrentTrial.result["ImageType"] = "Fractal";
+        //    session.CurrentTrial.result["TiltType"] = -(imageTiltType);
+        //    //session.CurrentTrial.result["HeadRotation"] = TheHeadRotation;
+        //    StartCoroutine(afterTrialStarts());
 
 
-            //Material[] mymaterials;
-            //if (imagetyle = "1")
-            //{
-            //    mymaterials = scenes;
-            //}
-            //else
-            //{
-            //    mymaterials = fractals;
-            //}
-
-            //meshRenderer.material = mymaterials[settiing.imagenunmber];
-        }
+        //}
     }
 
 
@@ -274,7 +366,7 @@ public class ChangeScene : MonoBehaviour
         var psiRad = Mathf.Atan2(2 * (rotation.value[0] * rotation.value[1] - rotation.value[2] * rotation.value[3]), (1.0f - 2.0f * (rotation.value[1] * rotation.value[1] + rotation.value[2] * rotation.value[2])));
         var psiDeg = psiRad * Mathf.Rad2Deg;
 
-        Debug.Log("theta:" + thetaDeg + "   phi:" + phiDeg + "   psi:" + psiDeg);
+        ////Debug.Log("theta:" + thetaDeg + "   phi:" + phiDeg + "   psi:" + psiDeg);
         // in real time, it looks like theta = pitch, phi = yaw, psi = roll..... but this is not what it looks like in matlab (in matlab, theta is roll)
 
 
