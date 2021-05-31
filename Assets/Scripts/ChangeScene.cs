@@ -32,7 +32,7 @@ public class ChangeScene : MonoBehaviour
     public Toggle calibrate;
 
     // In order to get the Eyes Image
-    private Texture2D dogs;
+    private Texture2D eyeimages;
     private Texture2D texBoi;
     public RawImage rimage;
 
@@ -75,88 +75,21 @@ public class ChangeScene : MonoBehaviour
 
     private void Temp_Texts() //all Raul! In order to get Eyes Image.
     {
-        dogs.LoadRawTextureData(FoveManager.theEyeImage().ImageData.data, (int)FoveManager.theEyeImage().ImageData.length);
-        dogs.Apply();
-        rimage.texture = dogs;
+        eyeimages.LoadRawTextureData(FoveManager.theEyeImage().ImageData.data, (int)FoveManager.theEyeImage().ImageData.length);
+        eyeimages.Apply();
+        rimage.texture = eyeimages;
     }
     // assign this as the first element in the "On Trial Begin" event in the Session component inspector
 
-
-    public void Generate(Session session)
-    {
-        List<string> imageTypes = session.settings.GetStringList("stimulus_imageType");
-        List<string> imageTiltTypes = session.settings.GetStringList("stimulus_imageTiltType");
-        List<string> imageNumbers = session.settings.GetStringList("stimulus_number");
-        int numRepeats = session.settings.GetInt("num_repeats");
-
-        // Here is an empty list that we will add to 
-        List<string[]> trialList = new List<string[]>();
-
-        //var imageTiltTypes = [-30, 0, 30];
-        //var imageTypes = ["scenes", "fractals"];
-
-        //List<int> imageNumbers = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };  // the number of fractals (30) which is the also the number of scenes (30)
-
-        //int numRepeats = 10;
-
-        for (int i = 0; i < numRepeats; i++)
-        {
-            foreach (string imageType in imageTypes)
-            {
-                foreach (string imageTiltType in imageTiltTypes)
-                {
-                    //Trial newTrial = block.CreateTrial();
-                    //newTrial.settings.SetValue("stimulus_imageType", imageType);
-                    //newTrial.settings.SetValue("stimulus_imageTiltType", imageTiltType);
-                    //newTrial.settings.SetValue("stimulus_number", imageNumber);
-                    string[] temp = new string[] { imageType, imageTiltType, "1" }; //the 1 is for a random number that we will fill in later.... will cycle through 1 to 30 
-                    trialList.Add(temp);
-                }
-            }
-        }
-        trialList.Shuffle();
-
-        //session.settings.SetValue("trialOrder", trialList);
-        //Debug.Log("trialOrder");
-
-        //FYI tempList[0][2] means 0th row out of 60, and 2th col (really 3rd but C# ya know)
-        imageNumbers.Shuffle(); // will shuffle 1 to 30
-
-        var totalTrials = numRepeats * imageTiltTypes.Count * imageTypes.Count;
-        Block theBlock = session.CreateBlock(totalTrials);
-        var trialcounter = 0;
-
-        while (trialcounter < totalTrials)
-        {
-            for (int i = 0; i < 30; i++) //30 bc we have 30 numImages
-            {
-                {
-                    trialList[trialcounter][2] = imageNumbers[i]; //  in trialList(trialcounter) in the 2nd place, put the number of imageNumbers that is shuffled. trial counter will go up through total trials so this will make it so that image numbers will cycle through 1-30 and then after that, reset back
-                    trialcounter = trialcounter + i;
-                }
-            }
-            imageNumbers.Shuffle(); //we have to do this so that once we go through all the image numbers, we will re-shuffle so  that can still use more 
-        }
-
-        // now we somehow need to assign the trial list info to the actual trials....?
-        for (int i = 0; i < trialList.Count; i++)
-        {
-            Trial newTrial = theBlock.CreateTrial();
-        }
-    }
 
 
 
     public void onTrialStart(Trial trial)
     {
-        // this i feel like we don't need now.... may 28
-        //string imageType = trial.settings.GetString("stimulus_imageType");
-        //int imageTiltType = trial.settings.GetInt("stimulus_imageTiltType");
-        //int imageNumber = trial.settings.GetInt("stimulus_number"); //new may 27
+        string imageType = trial.settings.GetString("stimulus_imageType");
+        int imageTiltType = trial.settings.GetInt("stimulus_imageTiltType");
+        int imageNumber =  trial.settings.GetInt("stimulus_number"); //new may 27
 
-        string imageType = (trialList[trial.number - 1][0]);
-        int imageTiltType = int.Parse(trialList[trial.number - 1][1]);
-        int imageNumber = int.Parse(trialList[trial.number - 1][2]);
 
         Session.instance.CurrentTrial.result["Image Tilt Type"] = -imageTiltType;
         Session.instance.CurrentTrial.result["Image Type"] = imageType;
@@ -237,8 +170,8 @@ public class ChangeScene : MonoBehaviour
             // log some trial info in our excel sheet
             Material SphereSharedMaterial = GetComponent<MeshRenderer>().sharedMaterial;
             session.CurrentTrial.result["StimName"] = SphereSharedMaterial;
-            session.CurrentTrial.result["ImageType"] = "Scene";   
-            session.CurrentTrial.result["TiltType"] = -(imageTiltType);
+            //session.CurrentTrial.result["ImageType"] = "Scene";   
+            //session.CurrentTrial.result["TiltType"] = -(imageTiltType);
             //session.CurrentTrial.result["HeadRotation"] = TheHeadRotation; 
             StartCoroutine(afterTrialStarts());
         //}
@@ -389,7 +322,7 @@ public class ChangeScene : MonoBehaviour
         texBoi.Apply();
         rimage.texture = texBoi;
 
-        dogs = new Texture2D(640, 240, TextureFormat.RGB24, false);
+        eyeimages = new Texture2D(640, 240, TextureFormat.RGB24, false);
     }
 
 
