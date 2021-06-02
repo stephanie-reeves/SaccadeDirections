@@ -321,17 +321,19 @@ public class GazeRecorder : MonoBehaviour
         writeThread.Start();
 
         StartCoroutine(JobsSpawnerCoroutine());
+
+        shouldRecord = true; // JOM: 5/31/2021 to record always from the begining
     }
 
     // Unity's standard Update function, here used only to listen for input to toggle data recording
     void Update()
     {
-        // If you press the assigned key, it will toggle the "recordingStopped" variable.
-        if (Input.GetKeyDown(toggleRecordingKey))
-        {
-            shouldRecord = !shouldRecord;
-            Debug.Log(shouldRecord ? "Starting" : "Stopping" + " data recording...");
-        }
+        //// If you press the assigned key, it will toggle the "recordingStopped" variable.
+        //if (Input.GetKeyDown(toggleRecordingKey))
+        //{
+        //    shouldRecord = !shouldRecord;
+        //    Debug.Log(shouldRecord ? "Starting" : "Stopping" + " data recording...");
+        //}
     }
 
     // This is called when the program quits, or when you press the stop button in the editor (if running from there).

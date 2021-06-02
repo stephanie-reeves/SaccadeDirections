@@ -27,33 +27,37 @@ public class ExperimentGenerator : MonoBehaviour
         List<string> imageTypes = session.settings.GetStringList("stimulus_imageType");
         List<int> imageTiltTypes = session.settings.GetIntList("stimulus_imageTiltType");
         List<int> imageNumbers = session.settings.GetIntList("stimulus_number");
-        int numRepeats = session.settings.GetInt("num_repeats");
+        int tiltOrder = session.settings.GetInt("stimulus_tiltOrder");
+        int totalTrials = session.settings.GetInt("total_num_trials");
+        int repeatsOffset = session.settings.GetInt("repeats_offset");
+
 
         Block block1; //this is empty, we are just declaring
         Trial newTrial;
 
         //int[] imageTypes = new int[] { 1, 2 };
         //int[] imageTiltTypes = new int[] { 0, 30, -30 };
-        for (int i = 0; i < numRepeats; i++)
+
+        block1 = session.CreateBlock();
+
+        foreach (string imageType in imageTypes)
         {
-            block1 = session.CreateBlock();
 
-            foreach (string imageType in imageTypes)
+            for (int i = 0; i < totalTrials / 2; i++)
             {
-                foreach (int imageTiltType in imageTiltTypes)
-                {
-                    foreach (int imageNumber in imageNumbers)
-                    {
-                        newTrial = block1.CreateTrial();
-                        newTrial.settings.SetValue("stimulus_imageType", imageType);
-                        newTrial.settings.SetValue("stimulus_imageTiltType", imageTiltType);
-                        newTrial.settings.SetValue("stimulus_number", imageNumber);
-                    }
+                int imageNumber = (repeatsOffset + i) % 30;
+                int imageTiltType = (tiltOrder + i) % 3;
+                newTrial = block1.CreateTrial();
+                newTrial.settings.SetValue("stimulus_imageType", imageType);
+                newTrial.settings.SetValue("stimulus_imageTiltType", imageTiltType);
+                newTrial.settings.SetValue("stimulus_number", imageNumber);
 
-                }
             }
-            block1.trials.Shuffle();
+
+
         }
+        block1.trials.Shuffle();
+
     }
 
 

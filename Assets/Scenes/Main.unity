@@ -1049,6 +1049,7 @@ MonoBehaviour:
   WhiteScreen: {fileID: 752820022}
   CalibrationDot: {fileID: 109691979}
   FoveInterface: {fileID: 820441969}
+  RecorderObject: {fileID: 0}
   fractals:
   - {fileID: 2100000, guid: ede9a5f9d8781d94fbc900fdfdcd3ea6, type: 2}
   - {fileID: 2100000, guid: a60505211d120f54fa0c064495aa12b7, type: 2}
