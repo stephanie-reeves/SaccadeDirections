@@ -547,6 +547,7 @@ public class GazeRecorder : MonoBehaviour
     // This is the collecting thread that collect and store data asynchronously from the rendering
     private void CollectThreadFunc()
     {
+        Debug.Log("TEST");
         while (collectThreadShouldLive)
         {
             RecordDatum(true);

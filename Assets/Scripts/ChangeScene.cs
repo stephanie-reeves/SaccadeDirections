@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UXF;
-using Fove.Unity;
+using Fove.Unity; 
 
 public class ChangeScene : MonoBehaviour
 {
@@ -24,6 +24,7 @@ public class ChangeScene : MonoBehaviour
     public Material[] scenes;
     public Material BaseMaterial;
     public Material PlainWhite;
+    public Material CalibrationText;
 
     // reference to the renderers we want to manipulate.
     public Renderer rend;
@@ -67,12 +68,12 @@ public class ChangeScene : MonoBehaviour
         //MainCamera.transform.rotation = Quaternion.LookRotation(direction);
     }
 
-    private void Temp_Texts() //all Raul! In order to get Eyes Image.
-    {
-        eyeimages.LoadRawTextureData(FoveManager.theEyeImage().ImageData.data, (int)FoveManager.theEyeImage().ImageData.length);
-        eyeimages.Apply();
-        rimage.texture = eyeimages;
-    }
+    //private void Temp_Texts() //all Raul! In order to get Eyes Image.
+    //{
+    //    eyeimages.LoadRawTextureData(FoveManager.theEyeImage().ImageData.data, (int)FoveManager.theEyeImage().ImageData.length);
+    //    eyeimages.Apply();
+    //    rimage.texture = eyeimages;
+    //}
     // assign this as the first element in the "On Trial Begin" event in the Session component inspector
 
 
@@ -115,10 +116,13 @@ public class ChangeScene : MonoBehaviour
         // log some trial info in our excel sheet
         Material SphereSharedMaterial = GetComponent<MeshRenderer>().sharedMaterial;
         session.CurrentTrial.result["StimName"] = SphereSharedMaterial;
-        Session.instance.CurrentTrial.result["Image Tilt Type"] = -imageTiltDegs;
-        Session.instance.CurrentTrial.result["Image Type"] = imageType;
+        Session.instance.CurrentTrial.result["ImageType"] = imageType;
+        Session.instance.CurrentTrial.result["TiltType"] = -imageTiltDegs;
         Session.instance.CurrentTrial.result["Image Number"] = imageNumber;
         StartCoroutine(afterTrialStarts());
+
+        // show the trial number in the debug log
+        Debug.Log("Trial Number: " + session.CurrentTrial.number);
         
     }
 
@@ -139,6 +143,8 @@ public class ChangeScene : MonoBehaviour
             Debug.Log("Time for homemade calibration!");
             WhiteScreenRend.enabled = true;
             WhiteScreenRend = WhiteScreen.GetComponent<Renderer>();
+            MeshRenderer meshRenderer = WhiteScreen.GetComponent<MeshRenderer>();
+            meshRenderer.material = CalibrationText;
             StartCoroutine(StartHomemadeCalibration());         
         }
     }
@@ -199,19 +205,19 @@ public class ChangeScene : MonoBehaviour
         } 
     }
 
-    private void Awake() //all Raul for EyesImage! 
-    {
-        InvokeRepeating("Temp_Texts", 2f, 0.5f); // means that every .5 s, the image will get recorded
+    //private void Awake() //all Raul for EyesImage! 
+    //{
+    //    InvokeRepeating("Temp_Texts", 2f, 0.5f); // means that every .5 s, the image will get recorded
 
-        texBoi = new Texture2D(480, 190);
-        for (int i = 0; i < 480; i++)
-            for (int j = 0; j < 190; j++)
-                texBoi.SetPixel(i, j, Color.red);
-        texBoi.Apply();
-        rimage.texture = texBoi;
+    //    texBoi = new Texture2D(480, 190);
+    //    for (int i = 0; i < 480; i++)
+    //        for (int j = 0; j < 190; j++)
+    //            texBoi.SetPixel(i, j, Color.red);
+    //    texBoi.Apply();
+    //    rimage.texture = texBoi;
 
-        eyeimages = new Texture2D(640, 240, TextureFormat.RGB24, false);
-    }
+    //    eyeimages = new Texture2D(640, 240, TextureFormat.RGB24, false);
+    //}
 
 
     // OLD (but maybe useful later??)

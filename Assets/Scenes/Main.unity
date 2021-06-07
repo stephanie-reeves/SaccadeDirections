@@ -1114,6 +1114,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 20b040001352253498591ef44f7ed7bf, type: 2}
   BaseMaterial: {fileID: 2100000, guid: e921624e73079d5449ba7b3c29485a77, type: 3}
   PlainWhite: {fileID: 2100000, guid: 54252d1e80fd80244bb83d2ef0a4fe21, type: 2}
+  CalibrationText: {fileID: 2100000, guid: 46712cd35e97a914cb3e803ceb4fa87a, type: 2}
   rend: {fileID: 1948712797}
   WhiteScreenRend: {fileID: 752820023}
   CalDotRend: {fileID: 109691981}
@@ -5233,7 +5234,7 @@ MonoBehaviour:
     EyeTorsion: 1
     HeadRotation: 1
     HeadPosition: 1
-    PupilShape: 1
+    PupilShape: 0
     IPD: 1
     IrisRadius: 1
     EyesImage: 1
