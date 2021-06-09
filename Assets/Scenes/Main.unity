@@ -1103,12 +1103,12 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 4fc1b0ff2711d3b40b48ba7fee19b6fb, type: 2}
   - {fileID: 2100000, guid: 82fea701a037b4240a1a36ca80b8680c, type: 2}
   - {fileID: 2100000, guid: 175a753fbb8a2c64a99f3f0fe1724559, type: 2}
-  - {fileID: 2100000, guid: 2466537142e973c40b53d14a4452d8ca, type: 2}
-  - {fileID: 2100000, guid: 0911efa5881f92c4a98f5bf82456c014, type: 2}
+  - {fileID: 2100000, guid: f80a46ca218bac14e82dc1027bc4877f, type: 2}
+  - {fileID: 2100000, guid: ead92514c5bcd694689bea8b95468e61, type: 2}
   - {fileID: 2100000, guid: ff08ba04a11056243b58952be99f03c9, type: 2}
   - {fileID: 2100000, guid: 2fec049e43588f94c8e1ac06e146c599, type: 2}
   - {fileID: 2100000, guid: 5c7f08ab1d9e11f40bc6843a8b709c05, type: 2}
-  - {fileID: 2100000, guid: 0c2b9485fe2da4c4abdc54d083ac51ad, type: 2}
+  - {fileID: 2100000, guid: 9fc7fa23d89005045b755655b6fb3bbc, type: 2}
   - {fileID: 2100000, guid: 6e62e1cf52ae1814f8bc42bcc5d89fec, type: 2}
   - {fileID: 2100000, guid: 00fed61623bec1f4c8634f6abb0dcbb3, type: 2}
   - {fileID: 2100000, guid: 20b040001352253498591ef44f7ed7bf, type: 2}
@@ -1138,7 +1138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &389136416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1961,6 +1961,11 @@ PrefabInstance:
         type: 3}
       propertyPath: field of view
       value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 20000013469000644, guid: 042142d01b081ab4ca555ec74a04c2cb,
+        type: 3}
+      propertyPath: m_TargetDisplay
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 20000013469000644, guid: 042142d01b081ab4ca555ec74a04c2cb,
         type: 3}

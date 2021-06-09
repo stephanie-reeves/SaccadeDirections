@@ -40,7 +40,9 @@ public class ChangeScene : MonoBehaviour
     public RawImage rimage;
 
     private int imageTiltDegs;
-    
+
+    float deltaTime = 0.0f;
+
     IEnumerator Wait_for_calibration()
     {
         Debug.Log("IsCal?");
@@ -181,28 +183,30 @@ public class ChangeScene : MonoBehaviour
 
     void Update()
     {
-        var rotation = FoveManager.GetHmdRotation();
-        //Debug.Log(rotation.value); // FOVE stores information in a data structure called Result, and so to get the actual values, you need to put ".value" otherwise this won't work
+        //var rotation = FoveManager.GetHmdRotation(); // FOVE stores information in a data structure called Result, and so to get the actual values, you need to put ".value" otherwise this won't work
 
-        var thetaRad = Mathf.Atan2(2 * (rotation.value[1] * rotation.value[2] - rotation.value[0] * rotation.value[3]), (1.0f - 2.0f * (rotation.value[2] * rotation.value[2] + rotation.value[3] * rotation.value[3])));
-        var thetaDeg = thetaRad * Mathf.Rad2Deg; // in degrees
+        //var thetaRad = Mathf.Atan2(2 * (rotation.value[1] * rotation.value[2] - rotation.value[0] * rotation.value[3]), (1.0f - 2.0f * (rotation.value[2] * rotation.value[2] + rotation.value[3] * rotation.value[3])));
+        //var thetaDeg = thetaRad * Mathf.Rad2Deg; // in degrees
 
-        var phiRad = -Mathf.Asin(2 * (rotation.value[1] * rotation.value[3] - rotation.value[0] * rotation.value[2]));
-        var phiDeg = phiRad * Mathf.Rad2Deg;
+        //var phiRad = -Mathf.Asin(2 * (rotation.value[1] * rotation.value[3] - rotation.value[0] * rotation.value[2]));
+        //var phiDeg = phiRad * Mathf.Rad2Deg;
 
-        var psiRad = Mathf.Atan2(2 * (rotation.value[0] * rotation.value[1] - rotation.value[2] * rotation.value[3]), (1.0f - 2.0f * (rotation.value[1] * rotation.value[1] + rotation.value[2] * rotation.value[2])));
-        var psiDeg = psiRad * Mathf.Rad2Deg;
+        //var psiRad = Mathf.Atan2(2 * (rotation.value[0] * rotation.value[1] - rotation.value[2] * rotation.value[3]), (1.0f - 2.0f * (rotation.value[1] * rotation.value[1] + rotation.value[2] * rotation.value[2])));
+        //var psiDeg = psiRad * Mathf.Rad2Deg;
 
-        Debug.Log("theta:" + thetaDeg + "   phi:" + phiDeg + "   psi:" + psiDeg);
-        // in real time, it looks like theta = pitch, phi = yaw, psi = roll..... but this is not what it looks like in matlab (in matlab, theta is roll)
+        //Debug.Log("theta:" + thetaDeg + "   phi:" + phiDeg + "   psi:" + psiDeg + "      TEST:" + FoveManager.GetHmdRotation().value.eulerAngles.z);
+        //// in real time, it looks like theta = pitch, phi = yaw, psi = roll..... but this is not what it looks like in matlab (in matlab, theta is roll)
 
+        ////Debug.Log(FoveManager.GetHmdRotation().value.eulerAngles.z); // this is from the FOVE ppl when I asked how to get head rotation LOL. It ends up being the same value as our Psi.
 
-        if (Input.GetKeyDown(KeyCode.Alpha1) & !session.InTrial)
+        if ((Input.GetKeyDown(KeyCode.Alpha1) | Input.GetKeyDown(KeyCode.Keypad1)) & !session.InTrial) //they can use either "1" on the keyboard 
         {
             rend = FixationDot.GetComponent<Renderer>();
             rend.enabled = false; 
             session.BeginNextTrial();
-        } 
+        }
+
+        deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
     }
 
     //private void Awake() //all Raul for EyesImage! 
@@ -219,6 +223,42 @@ public class ChangeScene : MonoBehaviour
     //    eyeimages = new Texture2D(640, 240, TextureFormat.RGB24, false);
     //}
 
+    // This method will display the current trial and head rotation in the scene on the experimenter's end (not in the FOVE), rather than in the Debug Log
+    void OnGUI()
+    {
+        // Get the FOVE rotation
+        var rotation = FoveManager.GetHmdRotation(); // FOVE stores information in a data structure called Result, and so to get the actual values, you need to put ".value" otherwise this won't work
+        var thetaRad = Mathf.Atan2(2 * (rotation.value[1] * rotation.value[2] - rotation.value[0] * rotation.value[3]), (1.0f - 2.0f * (rotation.value[2] * rotation.value[2] + rotation.value[3] * rotation.value[3]))); 
+        var thetaDeg = thetaRad * Mathf.Rad2Deg; // in degrees
+        var phiRad = -Mathf.Asin(2 * (rotation.value[1] * rotation.value[3] - rotation.value[0] * rotation.value[2]));
+        var phiDeg = phiRad * Mathf.Rad2Deg;
+        var psiRad = Mathf.Atan2(2 * (rotation.value[0] * rotation.value[1] - rotation.value[2] * rotation.value[3]), (1.0f - 2.0f * (rotation.value[1] * rotation.value[1] + rotation.value[2] * rotation.value[2])));
+        var psiDeg = psiRad * Mathf.Rad2Deg;
+
+        // Automatically grab the dimensions
+        int w = Screen.width, h = Screen.height;
+
+        // Change the Graphical User Interface's Style
+        GUIStyle style = new GUIStyle();
+
+        // Creates a home for the text
+        Rect rect = new Rect(0, h - (h / 40), w, h);// / 50);
+
+        // Style, yo!
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = h / 40;// / 50;
+        style.normal.textColor = new Color(255.0f, 0.0f, 0.0f, 1.0f);
+
+        // My Bullshit
+        float msec = deltaTime * 1000.0f;
+        float fps = 1.0f / deltaTime;
+
+        // What I want displayed and formatted
+        string text = "Trial Number: " + session.CurrentTrial.number + "     Theta:" + thetaDeg + "   Phi:" + phiDeg + "   Psi:" + psiDeg + "      FoveRotation:" + FoveManager.GetHmdRotation().value.eulerAngles.z;
+
+        // Paste the stuff to the box!
+        GUI.Label(rect, text, style);
+    }
 
     // OLD (but maybe useful later??)
     // These two commands are what freezes the scene regardless of head movement.... they produce a lot of jitter :/
